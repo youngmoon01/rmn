@@ -156,8 +156,6 @@ class brain:
         report += "================\n"
         report += "label: " + str(label)
 
-        # weight update after collecting history
-        self.base_layer.collect_history(label)
         self.base_layer.weight_update(feedback_list, label)
 
         return (report, is_hit, is_max_match, is_clean_match)

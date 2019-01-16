@@ -1,5 +1,4 @@
 from gradient_layer import gradient_layer
-from history_map import history_map
 
 class base_layer:
     def __init__(self, brain_profile):
@@ -14,11 +13,6 @@ class base_layer:
 
         # calculate derived parameters
         self.base_layer_depth = 2*self.gradient_level + 1
-
-        # activated history to apply frequency weight
-        self.activated_history = list()
-        for gradient in range(self.base_layer_depth):
-            self.activated_history.append(history_map(self.f_width, self.f_height))
 
         # activated_index accelerates learning-related calculation
         self.activated_count = 0
@@ -70,16 +64,3 @@ class base_layer:
                 for coor in index_map.keys():
                     # weight updates
                     the_layer.weight_update(coor, update_amount, output)
-
-    def collect_history(self, label):
-        weight_sum = 0.0
-        for gradient in range(self.base_layer_depth):
-            index_map = self.activated_index[gradient]
-            the_history_map = self.activated_history[gradient]
-
-            # collect history for each entry
-            for coor in index_map.keys():
-                x = coor[0]
-                y = coor[1]
-                # sum up the activation weights
-                weight_sum += the_history_map.update_and_get_ff(x, y, index_map[coor], label)
