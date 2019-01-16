@@ -1,2 +1,2 @@
 # rmn
-relative matching neural network
+Baseline implementation of relative matching neural network
