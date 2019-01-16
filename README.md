@@ -1,2 +1,3 @@
 # rmn
-Baseline implementation of relative matching neural network
+Relative Matching Neural network.
+Frequency Factor Weight (FFW) feature is additionally implemented.
