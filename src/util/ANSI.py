@@ -1,0 +1,20 @@
+# colors
+ANSI_RESET = u"\u001b[0m"
+
+ANSI_BLACK = u"\u001b[30m"
+ANSI_RED = u"\u001b[31m"
+ANSI_GREEN = u"\u001b[32m"
+ANSI_YELLOW = u"\u001b[33m"
+ANSI_BLUE = u"\u001b[34m"
+ANSI_MAGENTA = u"\u001b[35m"
+ANSI_CYAN = u"\u001b[36m"
+ANSI_WHITE = u"\u001b[37m"
+
+ANSI_BBLACK = u"\u001b[30;1m"
+ANSI_BRED = u"\u001b[31;1m"
+ANSI_BGREEN = u"\u001b[32;1m"
+ANSI_BYELLOW = u"\u001b[33;1m"
+ANSI_BBLUE = u"\u001b[34;1m"
+ANSI_BMAGENTA = u"\u001b[35;1m"
+ANSI_BCYAN = u"\u001b[36;1m"
+ANSI_BWHITE = u"\u001b[37;1m"
