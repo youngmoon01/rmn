@@ -4,7 +4,7 @@ ANSI_BGREEN = u"\u001b[32;1m"
 ANSI_RESET = u"\u001b[0m"
 
 RMN_HOME = '/home/youngmoon01/rmn/'
-profile_export_path = 'data/profile/run_profile/run_profile.dat'
+profile_export_path = 'data/profile/run_profile/run_60k.dat'
 
 settings = {
     'image_directory_path': RMN_HOME + 'data/training/images/',

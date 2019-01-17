@@ -21,7 +21,6 @@ class base_layer:
             self.activated_history.append(history_map(self.f_width, self.f_height))
 
         # activated_index accelerates learning-related calculation
-        self.activated_count = 0
         self.activated_index = list()
         for num in range(self.base_layer_depth):
             self.activated_index.append(dict())
@@ -36,8 +35,6 @@ class base_layer:
         map_index = gradient + self.gradient_level
         index_map = self.activated_index[map_index]
 
-        self.activated_count += 1
-
         # log to index map
         if (x, y) in index_map:
             index_map[(x, y)] += 1
@@ -51,28 +48,35 @@ class base_layer:
         # clear and re-initialize the activated index
         del self.activated_index
 
-        self.activated_count = 0
         self.activated_index = list()
         for num in range(self.base_layer_depth):
             self.activated_index.append(dict())
 
-    def weight_update(self, feedback_list, label):
-        count = self.activated_count
+    def weight_update(self, feedback_list, label, ffweight_sum):
         for item in feedback_list:
             output = item[0]
             difference = item[1]
-            update_amount = difference/count
+
+            # scale the ffweight sum to the difference
+            alpha = difference/ffweight_sum
 
             for gradient in range(len(self.activated_index)):
                 index_map = self.activated_index[gradient]
                 the_layer = self.gradient_layers[gradient]
+                the_history = self.activated_history[gradient]
 
                 for coor in index_map.keys():
+                    # get frequency factor
+                    x = coor[0]
+                    y = coor[1]
+                    ff = the_history.get_frequency_factor(x, y, label)
+                    update_amount = ff*alpha
+
                     # weight updates
                     the_layer.weight_update(coor, update_amount, output)
 
     def collect_history(self, label):
-        weight_sum = 0.0
+        ffweight_sum = 0.0
         for gradient in range(self.base_layer_depth):
             index_map = self.activated_index[gradient]
             the_history_map = self.activated_history[gradient]
@@ -81,5 +85,9 @@ class base_layer:
             for coor in index_map.keys():
                 x = coor[0]
                 y = coor[1]
+
                 # sum up the activation weights
-                weight_sum += the_history_map.update_and_get_ff(x, y, index_map[coor], label)
+                ffweight_sum += index_map[coor]*the_history_map.update_and_get_ff(x, y, index_map[coor], label)
+
+        # return the sum of frequency factor weight
+        return ffweight_sum

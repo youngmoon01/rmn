@@ -113,9 +113,10 @@ class brain:
                 report += ANSI_RED + str(label) + ": " + weight + ANSI_RESET + "\n"
 
                 # calculate the activation difference
-                difference = 1.0 - self.output_layer[label]
-                if difference < 1.0: #minimum update amount
-                    difference = 1.0
+                difference = 1.0
+                #difference = 1.0 - self.output_layer[label]
+                #if difference < 1.0: # minimum update amount
+                #    difference = 1.0
 
                 feedback_list.append((label, difference))
         else: # consider as 0.0 activation positive feedback
@@ -140,9 +141,10 @@ class brain:
                     report += ANSI_BLUE + str(output) + ": " + weight + ANSI_RESET + "\n"
 
                     # calculate the activation difference
-                    difference = 1.0 - self.output_layer[output]
-                    if difference > -1.0: # minimum update amount
-                        difference = -1.0
+                    difference = -1.0
+                    #difference = 1.0 - self.output_layer[output]
+                    #if difference > -1.0: # minimum update amount
+                    #    difference = -1.0
 
                     feedback_list.append((output, difference))
             else:
@@ -157,8 +159,8 @@ class brain:
         report += "label: " + str(label)
 
         # weight update after collecting history
-        self.base_layer.collect_history(label)
-        self.base_layer.weight_update(feedback_list, label)
+        ffweight_sum = self.base_layer.collect_history(label)
+        self.base_layer.weight_update(feedback_list, label, ffweight_sum)
 
         return (report, is_hit, is_max_match, is_clean_match)
 

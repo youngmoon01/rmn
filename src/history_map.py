@@ -16,7 +16,7 @@ class history_map:
 
     # update and get the frequency factor
     def update_and_get_ff(self, x, y, count, label):
-        self.map[x][y].update(count, label)
+        return self.map[x][y].update_and_get_ff(count, label)
 
     def get_frequency_factor(self, x, y, label):
-        return self.map([x][y].get_frequency_factor(label)
+        return self.map[x][y].get_frequency_factor(label)
