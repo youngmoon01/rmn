@@ -8,10 +8,10 @@ def fill_3_digits(num):
     if num < 0:
         print("input number of function fill_3_digits(num) should be in range 0 ~ 300")
         return
-    if num == 0:
+    if num < 127:
         return " "
     elif num < 300:
-        return str(num//32)
+        return str(num//128)
     else:
         print("input number of function fill_3_digits(num) should be in range 0 ~ 300")
         return

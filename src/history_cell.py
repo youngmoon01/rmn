@@ -3,7 +3,7 @@ class history_cell:
         self.history = dict()
         self.total = 0
 
-    def update(self, count, label):
+    def update_and_get_ff(self, count, label):
         self.total += count
 
         if label in self.history.keys():
@@ -11,10 +11,12 @@ class history_cell:
         else:
             self.history[label] = count
 
+        return self.history[label]/self.total
+
     def get_frequency_factor(self, label):
         if self.total == 0:
             return 1
-        if not in self.history[label]:
+        if label not in self.history:
             return 0
 
         return self.history[label]/self.total
