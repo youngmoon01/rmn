@@ -12,28 +12,24 @@ class base_layer:
         self.spatial_weight = brain_profile['spatial_weight']
         self.gradient_weight = brain_profile['gradient_weight']
 
-        # calculate derived parameters
-        self.base_layer_depth = 2*self.gradient_level + 1
-
         # activated history to apply frequency weight
         self.activated_history = list()
-        for gradient in range(self.base_layer_depth):
+        for gradient in range(self.gradient_level):
             self.activated_history.append(history_map(self.f_width, self.f_height))
 
         # activated_index accelerates learning-related calculation
         self.activated_index = list()
-        for num in range(self.base_layer_depth):
+        for num in range(self.gradient_level):
             self.activated_index.append(dict())
 
         # generate gradient layers
         self.gradient_layers = list()
-        for gradient in range(-self.gradient_level, self.gradient_level + 1):
+        for gradient in range(self.gradient_level):
             self.gradient_layers.append(gradient_layer(self.f_width, self.f_height, gradient))
 
     def activate_cell(self, x, y, gradient, output_layer):
         # update activated index to accelerates learning-related calculation
-        map_index = gradient + self.gradient_level
-        index_map = self.activated_index[map_index]
+        index_map = self.activated_index[gradient]
 
         # log to index map
         if (x, y) in index_map:
@@ -42,14 +38,14 @@ class base_layer:
             index_map[(x, y)] = 1
 
         # activate weights
-        self.gradient_layers[map_index].activate_cell(x, y, output_layer)
+        self.gradient_layers[gradient].activate_cell(x, y, output_layer)
 
     def clear_activated_index(self):
         # clear and re-initialize the activated index
         del self.activated_index
 
         self.activated_index = list()
-        for num in range(self.base_layer_depth):
+        for num in range(self.gradient_level):
             self.activated_index.append(dict())
 
     def weight_update(self, feedback_list, label, ffweight_sum):
@@ -77,7 +73,7 @@ class base_layer:
 
     def collect_history(self, label):
         ffweight_sum = 0.0
-        for gradient in range(self.base_layer_depth):
+        for gradient in range(self.gradient_level):
             index_map = self.activated_index[gradient]
             the_history_map = self.activated_history[gradient]
 

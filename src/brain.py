@@ -14,7 +14,7 @@ class brain:
         self.brain_file_path = ""
 
         # number of gradient difference level
-        self.gradient_level = 8
+        self.gradient_level = 2
 
         # filter size (let's set these larger than the filter sizes in typical CNN)
         self.f_width = 30
@@ -25,9 +25,6 @@ class brain:
 
         # gradient difference weight
         self.gradient_weight = 1.0
-
-        # derived parameters(calculated in __init__())
-        self.base_layer_depth = 0
 
         ###################################
         # DEFAULT PARAMETER SETTINGS ENDS #
@@ -45,7 +42,6 @@ class brain:
         self.brain_file_path = brain_profile['brain_file_path']
 
         # calculate derived parameters
-        self.base_layer_depth = 2*self.gradient_level + 1
         self.gradient_step = 256//self.gradient_level
 
         self.init_brain(brain_profile)
@@ -94,7 +90,6 @@ class brain:
 
         report = "================\n"
         if label in self.output_layer.keys():
-
             if self.output_layer[label] > 1.0: # hit
                 # update max_activated
                 if max_weight < self.output_layer[label]:
@@ -110,20 +105,18 @@ class brain:
                 is_clean_match = False
 
                 weight = str(int(self.output_layer[label]*100)/100.0)
-                report += ANSI_RED + str(label) + ": " + weight + ANSI_RESET + "\n"
+                report += ANSI_BLUE + str(label) + ": " + weight + ANSI_RESET + "\n"
 
                 # calculate the activation difference
                 difference = 1.1*(1.0 - self.output_layer[label])
-                if difference > 1.0: # maximum update amount
-                    difference = 1.0
 
                 feedback_list.append((label, difference))
         else: # consider as 0.0 activation positive feedback
             # report related
             is_clean_match = False
 
-            report += ANSI_RED + str(label) + ": 0.0" + ANSI_RESET + "\n"
-            feedback_list.append((label, 1.0))
+            report += ANSI_BLUE + str(label) + ": 0.0" + ANSI_RESET + "\n"
+            feedback_list.append((label, 1.1))
 
         for output in self.output_layer.keys():
             # update max_activated
@@ -137,12 +130,10 @@ class brain:
                     is_clean_match = False
 
                     weight = str(int(self.output_layer[output]*100)/100.0)
-                    report += ANSI_BLUE + str(output) + ": " + weight + ANSI_RESET + "\n"
+                    report += ANSI_RED + str(output) + ": " + weight + ANSI_RESET + "\n"
 
                     # calculate the activation difference
-                    difference = -1.1*self.output_layer[output]
-                    if difference < -1.0: # maximum update amount
-                        difference = -1.0
+                    difference = 1.1*(0.0 - self.output_layer[output])
 
                     feedback_list.append((output, difference))
             else:
@@ -169,7 +160,7 @@ class brain:
         f_height = self.f_height
 
         # calculate the source intensity
-        src_intensity = img_data[img_width*x + y]
+        gradient = img_data[img_width*x + y]
 
         # determine the scan range
         if x - f_width > 0:
@@ -190,25 +181,22 @@ class brain:
         # process first line
         for i in range(x + 1, x_end):
             # calculate the destination intensity
-            dst_intensity = img_data[img_width*i + y]
-
-            # accumulate weight to each label
-            self.scan_pixel(x, y, i , y, src_intensity, dst_intensity)
+            if gradient == img_data[img_width*i + y]:
+                # accumulate weight to each label
+                self.scan_pixel(x, y, i , y, gradient)
 
         # process rest bottom lines
         for i in range(x_start, x_end):
             for j in range(y + 1, y_end):
                 # calculate the destination intensity
-                dst_intensity = img_data[img_width*i + j]
+                if gradient == img_data[img_width*i + j]:
+                    # accumulate weight to each label
+                    self.scan_pixel(x, y, i , j, gradient)
 
-                # accumulate weight to each label
-                self.scan_pixel(x, y, i , j, src_intensity, dst_intensity)
-
-    def scan_pixel(self, src_x, src_y, dst_x, dst_y, src_intensity, dst_intensity):
+    def scan_pixel(self, src_x, src_y, dst_x, dst_y, gradient):
         map_x = (dst_x - src_x) + self.f_width
         map_y = (dst_y - src_y)
 
-        gradient = dst_intensity - src_intensity
         self.base_layer.activate_cell(map_x, map_y, gradient, self.output_layer)
 
     # import brain from a brain file
