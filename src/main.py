@@ -103,6 +103,7 @@ for num in range(start_idx, end_idx + 1):
     ret = brain.process_img(img, label)
     report = ret[0]
     is_hit = ret[1]
+
     is_max_match = ret[2]
     is_clean_match = ret[3]
 
