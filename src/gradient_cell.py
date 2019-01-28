@@ -7,7 +7,7 @@ class gradient_cell:
             new_list = list()
             for j in range(2):
                 new_list.append(list())
-            self.up_links.append(new_list())
+            self.up_links.append(new_list)
 
         # initialize history map
         self.history_map = dict()
@@ -25,7 +25,7 @@ class gradient_cell:
         self.up_links[x][y].append(cell)
 
 
-    def get_frequency_factor(label):
+    def get_frequency_factor(self, label):
         if label not in self.history_map:
             return 0.0
         else:
@@ -39,3 +39,19 @@ class gradient_cell:
             self.history_map[label] = weight
 
         self.history_total += weight
+
+
+    # fire towards the output layer
+    def propagate_output(self, weight, output_layer):
+        for output in self.output_weights.keys():
+            if output in output_layer:
+                output_layer[output] += weight*self.output_weights[output]
+            else:
+                output_layer[output] = weight*self.output_weights[output]
+
+
+    def feedback(self, output, alpha):
+        if output in self.output_weights:
+            self.output_weights[output] += alpha
+        else:
+            self.output_weights[output] = alpha

@@ -1,1 +1,1 @@
-{"brain_file_path": "/home/youngmoon01/rmn/data/brain/brain.dat", "gradient_level": 8, "layer_depth": 30, "gradient_locality": 1, "gradient_weight": 1.0, "spatial_locality": 1, "spatial_weight": 1.0, "new_cell_weight": 1.0}
+{"brain_file_path": "/home/youngmoon01/rmn/data/brain/brain.dat", "gradient_level": 8, "layer_depth": 30, "gradient_locality": 1, "gradient_weight": 0.9, "spatial_locality": 1, "spatial_weight": 0.9, "new_cell_weight": 0.5}

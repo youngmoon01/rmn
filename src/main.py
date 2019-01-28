@@ -73,7 +73,7 @@ f.close()
 brain_profile = json.loads(dump)
 del dump
 
-brain = brain(brain_profile)
+brain.init(brain_profile)
 
 # start processing target images
 # initialize variables related to report

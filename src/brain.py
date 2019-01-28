@@ -1,6 +1,7 @@
 from util.ANSI import *
 
 from gradient_layer import gradient_layer
+from gradient_map import gradient_map
 from matching_layer import matching_layer
 
 # Brain structure of relative matching neural network
@@ -30,26 +31,25 @@ class brain:
     # DEFAULT PARAMETER SETTINGS ENDS #
     ###################################
 
-    def init(brain_profile):
+    @classmethod
+    def init(br, brain_profile):
         # reads parameter settings from profile
-        gradient_level = brain_profile['gradient_level']
+        br.gradient_level = brain_profile['gradient_level']
 
-        layer_depth = brain_profile['layer_depth']
+        br.layer_depth = brain_profile['layer_depth']
 
-        spatial_weight = brain_profile['spatial_weight']
-        spatial_locality = brain_profile['spatial_locality']
-        gradient_weight = brain_profile['gradient_weight']
-        gradient_locality = brain_profile['gradient_locality']
+        br.spatial_weight = brain_profile['spatial_weight']
+        br.spatial_locality = brain_profile['spatial_locality']
+        br.gradient_weight = brain_profile['gradient_weight']
+        br.gradient_locality = brain_profile['gradient_locality']
 
-        new_cell_weight = brain_profile['new_cell_weight']
-        active_cell_weight = 1.0 - new_cell_weight
+        br.new_cell_weight = brain_profile['new_cell_weight']
+        br.active_cell_weight = 1.0 - br.new_cell_weight
 
-        brain_file_path = brain_profile['brain_file_path']
+        br.brain_file_path = brain_profile['brain_file_path']
 
         # calculate derived parameters
-        gradient_step = 256//gradient_level
-
-        init_brain(brain_profile)
+        br.gradient_step = 256//br.gradient_level
 
         # check if brain file exists and matches to brain profile
         brain_file_valid = False
@@ -60,7 +60,7 @@ class brain:
             something
 
         # initialzie the gradient maps
-        gradient_map.init(gradient_level)
+        gradient_map.init(br.gradient_level)
 
         # initialize the static variables of matching layer
         matching_layer.init(brain_profile)
@@ -69,7 +69,8 @@ class brain:
         gradient_layer.init(brain_profile)
 
     # process a target image, guess the output, learn and return the report
-    def process_img(img, label):
+    @classmethod
+    def process_img(br, img, label):
         # initialize activated index and output_layer
         output_layer = dict()
 
@@ -77,8 +78,7 @@ class brain:
         feedback_list = list()
 
         # process the image from the gradient analysis
-        weight_sum = 0.0
-        weight_sum = gradient_layer.process_img(img, output_layer)
+        gradient_layer.process_img(img, output_layer)
 
         # report-related boolean
         is_hit = False
@@ -153,35 +153,36 @@ class brain:
 
         # feedback the network
         new_cells = None # new set of cells for positive feedback
+        new_cell_count = 0
         for item in feedback_list:
             output = item[0]
             difference = item[1]
             if difference > 0.0: # positive feedback
                 if new_cells == None:
-                    # feedback to new cells
+                    # detect new set of cells
                     new_cells = list()
                     new_cell_count = gradient_layer.detect_new_cells(img, label, new_cells)
-                    new_cell_diff = difference*new_cell_weight
-                    gradient_layer.feedback_new_cells
 
-                    # feedback to active cells
-                    active_cell_diff = active_cell_weight*difference
-                    something
+                # feedback to new cells
+                new_cell_diff = difference*br.new_cell_weight
+                alpha = new_cell_diff/new_cell_count
+                for cell_list in new_cells:
+                    for cell in cell_list:
+                        cell.feedback(output, alpha)
+
+                # feedback to active cells
+                active_cell_diff = br.active_cell_weight*difference
+                weight_sum = gradient_layer.update_history(label)
+                ffw = active_cell_diff/weight_sum
+                gradient_layer.active_cells_feedback(output, ffw)
+
             else: # negative feedback
-                something
-
-
-
+                # feedback to active cells
+                weight_sum = gradient_layer.update_history(label)
+                ffw = difference/weight_sum
+                gradient_layer.active_cells_feedback(output, ffw)
 
         return (report, is_hit, is_max_match, is_clean_match)
-
-
-
-        # weight update after collecting history
-        #ffweight_sum = self.base_layer.collect_history(label)
-        #self.base_layer.weight_update(feedback_list, label, ffweight_sum)
-
-        #return (report, is_hit, is_max_match, is_clean_match)
 
 
     # import brain from a brain file
