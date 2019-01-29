@@ -76,6 +76,7 @@ class matching_layer:
 
 
     def propagate_next(self, output_layer):
+        print(self.depth)
         weight_sum = 0.0
 
         self.next_layer = matching_layer(self.depth + 1, self.layer_width - 1, self.layer_height - 1)

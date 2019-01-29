@@ -12,12 +12,12 @@ settings = {
     'layer_depth': 10,
 
     # gradient-locality related
-    'gradient_locality': 1,
-    'gradient_weight': 0.9,
+    'gradient_locality': 2,
+    'gradient_weight': 0,
 
     # spatial-locality related
-    'spatial_locality': 1,
-    'spatial_weight': 0.9,
+    'spatial_locality': 2,
+    'spatial_weight': 0,
 
     # new cell weight range: [0, 1]
     'new_cell_weight': 0.5

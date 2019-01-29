@@ -27,6 +27,8 @@ class brain:
     gradient_weight = 0.1
     gradient_locality = 1
 
+    cell_next_id = 0
+
     ###################################
     # DEFAULT PARAMETER SETTINGS ENDS #
     ###################################
@@ -59,7 +61,7 @@ class brain:
             # import brain data from the brain file
             something
 
-        # initialzie the gradient maps
+        # initialize the gradient maps
         gradient_map.init(br.gradient_level)
 
         # initialize the static variables of matching layer
@@ -184,6 +186,12 @@ class brain:
 
         return (report, is_hit, is_max_match, is_clean_match)
 
+
+    @classmethod
+    def request_cell_id(br):
+        ret = br.cell_next_id
+        br.cell_next_id += 1
+        return ret
 
     # import brain from a brain file
     def import_brain(self, profile_path):

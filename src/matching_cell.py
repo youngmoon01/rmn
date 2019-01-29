@@ -1,5 +1,9 @@
+from cells import cells
+
 class matching_cell:
     def __init__(self, top_left, top_right, bottom_left, bottom_right):
+        self.id = cells.request_cell_id()
+
         # links to upper matching layer
         # 2x2 array of lists
         self.up_links = list()
@@ -24,6 +28,10 @@ class matching_cell:
         self.children[0].append(bottom_left)
         self.children[1].append(top_right)
         self.children[1].append(bottom_right)
+
+
+    def get_id(self):
+        return self.id
 
 
     def get_up_links(self, x, y):

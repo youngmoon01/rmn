@@ -1,5 +1,9 @@
+from cells import cells
+
 class gradient_cell:
     def __init__(self):
+        self.id = cells.request_cell_id()
+
         # links to upper matching layer
         # 2x2 array of lists
         self.up_links = list()
@@ -15,6 +19,10 @@ class gradient_cell:
 
         # initialize output weights
         self.output_weights = dict()
+
+
+    def get_id(self):
+        return self.id
 
 
     def get_up_links(self, x, y):
