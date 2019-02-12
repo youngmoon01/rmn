@@ -17,10 +17,10 @@ class cells:
     def register_upper_link(c, upper_cell, top_left, top_right, bottom_left, bottom_right):
         hashing = None
         try:
-            hashing = c_uplink_hash[top_left.get_id()]
+            hashing = c.uplink_hash[top_left.get_id()]
         except KeyError:
             c.uplink_hash[top_left.get_id()] = dict()
-            hashing = c_uplink_hash[top_left.get_id()]
+            hashing = c.uplink_hash[top_left.get_id()]
 
         try:
             hashing = hashing[top_right.get_id()]
